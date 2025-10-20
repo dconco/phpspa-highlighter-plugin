@@ -47,6 +47,14 @@ class AcodePlugin {
             if (file.session.bgTokenizer) {
                file.session.bgTokenizer.start(0);
             }
+            
+            // Verify the mode was applied
+            const currentMode = file.session.getMode();
+            if (currentMode && currentMode.$id) {
+               console.log(`PhpSPA Highlighter: Mode applied to ${file.filename}, current mode: ${currentMode.$id}`);
+            } else {
+               console.warn(`PhpSPA Highlighter: Mode may not have been applied correctly to ${file.filename}`);
+            }
          } catch (error) {
             console.error('PhpSPA Highlighter: Error applying mode to file:', error);
          }
@@ -54,7 +62,7 @@ class AcodePlugin {
    }
 
    private applyModeToOpenFiles(): void {
-      if (!editorManager || !editorManager.files) {
+      if (!editorManager || !editorManager.files || !this.phpSpaMode) {
          return;
       }
       
