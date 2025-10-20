@@ -15,12 +15,39 @@ export class PhpSpaMode {
 
   createMode() {
     const ace = this.ace;
-    const oop = ace.require("ace/lib/oop");
-    const PhpMode = ace.require("ace/mode/php").Mode;
-    const PhpHighlightRules = ace.require("ace/mode/php_highlight_rules").PhpHighlightRules;
-    const HtmlHighlightRules = ace.require("ace/mode/html_highlight_rules").HtmlHighlightRules;
-    const CssHighlightRules = ace.require("ace/mode/css_highlight_rules").CssHighlightRules;
-    const JavaScriptHighlightRules = ace.require("ace/mode/javascript_highlight_rules").JavaScriptHighlightRules;
+    
+    // Load required ace modules with error handling
+    let oop, PhpMode, PhpHighlightRules, HtmlHighlightRules, CssHighlightRules, JavaScriptHighlightRules;
+    
+    try {
+      oop = ace.require("ace/lib/oop");
+      if (!oop) throw new Error("Failed to load ace/lib/oop");
+      
+      const phpModule = ace.require("ace/mode/php");
+      PhpMode = phpModule.Mode;
+      if (!PhpMode) throw new Error("Failed to load PHP Mode");
+      
+      const phpHighlightModule = ace.require("ace/mode/php_highlight_rules");
+      PhpHighlightRules = phpHighlightModule.PhpHighlightRules;
+      if (!PhpHighlightRules) throw new Error("Failed to load PHP Highlight Rules");
+      
+      const htmlHighlightModule = ace.require("ace/mode/html_highlight_rules");
+      HtmlHighlightRules = htmlHighlightModule.HtmlHighlightRules;
+      if (!HtmlHighlightRules) throw new Error("Failed to load HTML Highlight Rules");
+      
+      const cssHighlightModule = ace.require("ace/mode/css_highlight_rules");
+      CssHighlightRules = cssHighlightModule.CssHighlightRules;
+      if (!CssHighlightRules) throw new Error("Failed to load CSS Highlight Rules");
+      
+      const jsHighlightModule = ace.require("ace/mode/javascript_highlight_rules");
+      JavaScriptHighlightRules = jsHighlightModule.JavaScriptHighlightRules;
+      if (!JavaScriptHighlightRules) throw new Error("Failed to load JavaScript Highlight Rules");
+      
+      console.log('PhpSPA Highlighter: All Ace modules loaded successfully');
+    } catch (error) {
+      console.error('PhpSPA Highlighter: Error loading Ace modules:', error);
+      throw error;
+    }
 
     // Create custom highlight rules that extend PHP rules
     const PhpSpaHighlightRules = function(this: any) {
