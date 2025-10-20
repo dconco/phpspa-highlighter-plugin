@@ -140,6 +140,22 @@ Open the `example.php` file included in the repository to see a comprehensive de
 3. **Check file extension**: The file must have a `.php` extension
 4. **Check console**: In Acode, check the developer console for any error messages
 
+### How to Check Console Output
+The plugin now includes comprehensive debugging information. To check if the plugin is working:
+
+1. Open Acode's developer console (if available in your version)
+2. Look for messages starting with `PhpSPA Highlighter:`
+3. You should see these messages on successful initialization:
+   - `PhpSPA Highlighter: Found ace via [method]` - Shows how Ace was accessed
+   - `PhpSPA Highlighter: All Ace modules loaded successfully` - Confirms modules loaded
+   - `PhpSPA Highlighter: Mode registered successfully` - Confirms mode is registered
+   - `PhpSPA Highlighter: Mode applied to [filename], current mode: ace/mode/phpspa` - Confirms mode is active
+
+4. If you see error messages, they will help identify the problem:
+   - `PhpSPA Highlighter: Ace Editor not found after trying all methods` - Ace is not available
+   - `PhpSPA Highlighter: Error loading Ace modules` - Module loading failed
+   - `PhpSPA Highlighter: Error applying mode to file` - Mode application failed
+
 ### Syntax Highlighting Not Appearing
 1. **Switch files**: Try switching to another file and back
 2. **Reload file**: Close and reopen the PHP file
@@ -152,6 +168,22 @@ The plugin logs helpful messages to the console:
 - `PhpSPA Highlighter: Mode registered successfully` - Plugin initialized correctly
 - `PhpSPA Highlighter: Ace Editor not found` - Ace Editor is not available (serious issue)
 - `PhpSPA Highlighter: Error applying mode to file` - There was an error applying the mode
+- `PhpSPA Highlighter: Found ace via [method]` - Shows which method successfully accessed Ace
+- `PhpSPA Highlighter: All Ace modules loaded successfully` - All required modules loaded
+- `PhpSPA Highlighter: Mode applied to [filename]` - Mode was successfully applied to a file
+
+### Advanced Debugging
+
+If the plugin isn't working and you want to help diagnose the issue:
+
+1. Open the browser console in Acode
+2. Look for all messages starting with `PhpSPA Highlighter:`
+3. Copy the complete console output
+4. Create a GitHub issue with:
+   - The console output
+   - Your Acode version
+   - Your Android version
+   - A sample PHP file that's not highlighting correctly
 
 ## Expected Behavior
 
