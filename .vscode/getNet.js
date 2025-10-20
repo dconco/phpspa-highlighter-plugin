@@ -1,7 +1,7 @@
 const { networkInterfaces } = require('os')
 
 module.exports = async (mode = 'dev') => {
-	const ip = 'localhost'
+	const ip = '192.168.43.137'
 	const port = '5500'
 	const src = `http://${ip || '10.0.0'}:${port}`
 	console.log('Server starting at: ', src)

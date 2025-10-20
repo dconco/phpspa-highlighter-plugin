@@ -76,178 +76,178 @@ export class PhpSpaMode {
       // Define HTML heredoc body rules (with variable interpolation)
       this.$rules.htmlHeredocBody = [
         {
-          token: "string.heredoc.delimiter.html",
+          token: "invalid",
           regex: /^\s*(HTML)\s*;?\s*$/,
           next: "pop"
         },
         {
-          token: "variable.interpolated.php",
+          token: "invalid",
           regex: /\{\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\}/
         },
         {
-          token: "meta.tag.html",
+          token: "invalid",
           regex: /<\/?[a-zA-Z][a-zA-Z0-9]*\b/,
           next: "htmlTag"
         },
         {
-          token: "text.html",
+          token: "invalid",
           regex: /[^<\{]+/
         },
         {
-          defaultToken: "text.html"
+          defaultToken: "invalid"
         }
       ];
 
       // HTML tag state for basic HTML highlighting
       this.$rules.htmlTag = [
         {
-          token: "meta.tag.html",
+          token: "invalid",
           regex: />/,
           next: "htmlHeredocBody"
         },
         {
-          token: "entity.other.attribute-name.html",
+          token: "invalid",
           regex: /[a-zA-Z-]+/
         },
         {
-          token: "keyword.operator.html",
+          token: "invalid",
           regex: /=/
         },
         {
-          token: "string.quoted.html",
+          token: "invalid",
           regex: /"[^"]*"/
         },
         {
-          token: "string.quoted.html", 
+          token: "invalid", 
           regex: /'[^']*'/
         },
         {
-          defaultToken: "meta.tag.html"
+          defaultToken: "invalid"
         }
       ];
 
       // Define HTML nowdoc body rules (no variable interpolation)
       this.$rules.htmlNowdocBody = [
         {
-          token: "string.heredoc.delimiter.html",
+          token: "invalid",
           regex: /^\s*(HTML)\s*;?\s*$/,
           next: "pop"
         },
         {
-          token: "meta.tag.html",
+          token: "invalid",
           regex: /<\/?[a-zA-Z][a-zA-Z0-9]*\b/,
           next: "htmlTagNowdoc"
         },
         {
-          token: "text.html",
+          token: "invalid",
           regex: /[^<]+/
         },
         {
-          defaultToken: "text.html"
+          defaultToken: "invalid"
         }
       ];
 
       // HTML tag state for nowdoc
       this.$rules.htmlTagNowdoc = [
         {
-          token: "meta.tag.html",
+          token: "invalid",
           regex: />/,
           next: "htmlNowdocBody"
         },
         {
-          token: "entity.other.attribute-name.html",
+          token: "invalid",
           regex: /[a-zA-Z-]+/
         },
         {
-          token: "keyword.operator.html",
+          token: "invalid",
           regex: /=/
         },
         {
-          token: "string.quoted.html",
+          token: "invalid",
           regex: /"[^"]*"/
         },
         {
-          token: "string.quoted.html",
+          token: "invalid",
           regex: /'[^']*'/
         },
         {
-          defaultToken: "meta.tag.html"
+          defaultToken: "invalid"
         }
       ];
 
       // Define CSS heredoc body rules (with variable interpolation)
       this.$rules.cssHeredocBody = [
         {
-          token: "string.heredoc.delimiter.css",
+          token: "invalid",
           regex: /^\s*(CSS)\s*;?\s*$/,
           next: "pop"
         },
         {
-          token: "variable.interpolated.php",
+          token: "invalid",
           regex: /\{\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\}/
         },
         {
-          token: "support.type.property-name.css",
+          token: "invalid",
           regex: /[a-zA-Z-]+(?=\s*:)/
         },
         {
-          token: "punctuation.separator.css",
+          token: "invalid",
           regex: /:/
         },
         {
-          token: "support.constant.property-value.css",
+          token: "invalid",
           regex: /[^;\{\}]+/
         },
         {
-          token: "punctuation.terminator.css",
+          token: "invalid",
           regex: /;/
         },
         {
-          defaultToken: "source.css"
+          defaultToken: "invalid"
         }
       ];
 
       // Define CSS nowdoc body rules (no variable interpolation)
       this.$rules.cssNowdocBody = [
         {
-          token: "string.heredoc.delimiter.css",
+          token: "invalid",
           regex: /^\s*(CSS)\s*;?\s*$/,
           next: "pop"
         },
         {
-          token: "support.type.property-name.css",
+          token: "invalid",
           regex: /[a-zA-Z-]+(?=\s*:)/
         },
         {
-          token: "punctuation.separator.css",
+          token: "invalid",
           regex: /:/
         },
         {
-          token: "support.constant.property-value.css",
+          token: "invalid",
           regex: /[^;\{\}]+/
         },
         {
-          token: "punctuation.terminator.css",
+          token: "invalid",
           regex: /;/
         },
         {
-          defaultToken: "source.css"
+          defaultToken: "invalid"
         }
       ];
 
       // Define JavaScript heredoc body rules (with variable interpolation)  
       this.$rules.jsHeredocBody = [
         {
-          token: "string.heredoc.delimiter.javascript",
+          token: "invalid",
           regex: /^\s*(JS|JAVASCRIPT)\s*;?\s*$/,
           next: "pop"
         },
         {
-          token: "variable.interpolated.php",
+          token: "invalid",
           regex: /\{\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\}/
         },
         {
-          token: "storage.type.js",
+          token: "invalid",
           regex: /\b(?:function|var|let|const|class)\b/
         },
         {
@@ -267,7 +267,7 @@ export class PhpSpaMode {
           regex: /\b\d+\.?\d*\b/
         },
         {
-          defaultToken: "source.js"
+          defaultToken: "invalid"
         }
       ];
 
@@ -302,6 +302,30 @@ export class PhpSpaMode {
           defaultToken: "source.js"
         }
       ];
+
+      // Force ALL tokens across all states to 'invalid' so everything is visibly red.
+      try {
+        Object.keys(this.$rules).forEach((state: string) => {
+          this.$rules[state] = this.$rules[state].map((rule: any) => {
+            const copy: any = { ...rule };
+            if (typeof copy.token === 'string') {
+              copy.token = 'invalid';
+            } else if (Array.isArray(copy.token)) {
+              copy.token = copy.token.map(() => 'invalid');
+            }
+            if ('defaultToken' in copy) {
+              copy.defaultToken = 'invalid';
+            }
+            return copy;
+          });
+          const hasDefault = this.$rules[state].some((r: any) => 'defaultToken' in r);
+          if (!hasDefault) {
+            this.$rules[state].push({ defaultToken: 'invalid' } as any);
+          }
+        });
+      } catch (e) {
+        // ignore transform errors; fallback to normal rules
+      }
 
       this.normalizeRules();
     };
