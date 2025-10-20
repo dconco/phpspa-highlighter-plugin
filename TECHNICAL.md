@@ -56,13 +56,34 @@ src/
 - Defines start patterns for heredoc/nowdoc detection
 - Defines end patterns with proper delimiter matching
 - Handles variable interpolation in heredocs only
+- Includes robust error handling for module loading
 
 **AcodePlugin Class:**
-- Initializes the PhpSpaMode with the Ace Editor instance
+- Initializes the PhpSpaMode with the Ace Editor instance using multiple access methods
+- Supports three ways to access Ace Editor (window.ace, global acequire, editorManager.editor)
 - Registers the custom mode with Ace's module system
 - Applies the mode to all `.php` files automatically
 - Listens to editor events (file switch, file load, new file)
+- Includes comprehensive debugging output
 - Provides proper cleanup on plugin unmount
+
+#### Ace Editor Access Methods
+
+The plugin uses multiple methods to access the Ace Editor object, ensuring compatibility across different Acode versions:
+
+1. **Primary Method**: `window.ace`
+   - Standard Ace Editor global object
+   - Most common access pattern
+
+2. **Fallback Method 1**: `window.acequire`
+   - Ace's module loader function
+   - Sometimes used as the primary global in some integrations
+
+3. **Fallback Method 2**: `editorManager.editor.ace`
+   - Acode-specific access path
+   - Used when global objects are not available
+
+This multi-method approach ensures the plugin works reliably across different environments.
 
 ### 5. Mode Application
 The plugin applies the custom mode in several ways:
