@@ -14,17 +14,20 @@ class AcodePlugin {
    async init(): Promise<void> {
       this.initializePhpSpaMode();
 
-      // Try applying to current and open files shortly after init (covers load timing)
+      // Apply mode to any already-open PHP files after a short delay
       setTimeout(() => {
          this.applyModeToOpenFiles();
          this.applyModeToCurrentFile();
       }, 300);
 
-      // Apply on editor events when available
+      // Set up event listeners for file operations
       if (editorManager && typeof editorManager.on === 'function') {
-         // Common Acode events
+         // Apply mode when switching between files
          editorManager.on('switch-file', () => this.applyModeToCurrentFile());
+         // Apply mode when a file is loaded/opened
          editorManager.on('file-loaded', () => this.applyModeToCurrentFile());
+         // Apply mode when a new file is created
+         editorManager.on('new-file', () => this.applyModeToCurrentFile());
       }
    }
 
@@ -35,16 +38,15 @@ class AcodePlugin {
       
       const file = editorManager.activeFile;
       if (file.filename && /\.php$/i.test(file.filename) && file.session && this.phpSpaMode) {
-         // Ensure our mode is registered, then set by name so Ace loads it properly
-         this.phpSpaMode.register();
          try {
+            // Set our custom mode
             file.session.setMode('ace/mode/phpspa');
-            // Force re-tokenize
+            // Force re-tokenization to apply the new mode immediately
             if (file.session.bgTokenizer) {
                file.session.bgTokenizer.start(0);
             }
-         } catch (_) {
-            // no-op
+         } catch (error) {
+            console.error('PhpSPA Highlighter: Error applying mode to file:', error);
          }
       }
    }
@@ -55,7 +57,6 @@ class AcodePlugin {
       }
       
       const files = editorManager.files;
-      this.phpSpaMode?.register();
       files.forEach((file: any) => {
          try {
             if (file.filename && /\.php$/i.test(file.filename) && file.session) {
@@ -64,8 +65,8 @@ class AcodePlugin {
                   file.session.bgTokenizer.start(0);
                }
             }
-         } catch (_) {
-            // ignore
+         } catch (error) {
+            console.error('PhpSPA Highlighter: Error applying mode to open file:', error);
          }
       });
    }
@@ -73,12 +74,18 @@ class AcodePlugin {
    private initializePhpSpaMode(): void {
       const ace = window.ace;
       if (!ace) {
+         console.error('PhpSPA Highlighter: Ace Editor not found');
          return;
       }
 
-      this.phpSpaMode = new PhpSpaMode(ace);
-      // Ensure our custom mode module is defined
-      this.phpSpaMode.register();
+      try {
+         this.phpSpaMode = new PhpSpaMode(ace);
+         // Register our custom mode with Ace
+         this.phpSpaMode.register();
+         console.log('PhpSPA Highlighter: Mode registered successfully');
+      } catch (error) {
+         console.error('PhpSPA Highlighter: Error initializing mode:', error);
+      }
    }
 
    async destroy(): Promise<void> {

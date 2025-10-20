@@ -1,9 +1,11 @@
 /**
  * PhpSPA Syntax Mode for Ace Editor
  * Extends PHP syntax highlighting to support embedded HTML, CSS, and JavaScript in heredoc/nowdoc blocks
+ * 
+ * This implementation uses Ace's embedRules feature to properly embed language modes
+ * for a seamless multi-language syntax highlighting experience.
  */
 
-// Define the custom PHP mode that extends Ace's built-in PHP mode
 export class PhpSpaMode {
   private ace: any;
 
@@ -14,319 +16,147 @@ export class PhpSpaMode {
   createMode() {
     const ace = this.ace;
     const oop = ace.require("ace/lib/oop");
-    const TextMode = ace.require("ace/mode/text").Mode;
     const PhpMode = ace.require("ace/mode/php").Mode;
-    const TextHighlightRules = ace.require("ace/mode/text_highlight_rules").TextHighlightRules;
     const PhpHighlightRules = ace.require("ace/mode/php_highlight_rules").PhpHighlightRules;
+    const HtmlHighlightRules = ace.require("ace/mode/html_highlight_rules").HtmlHighlightRules;
+    const CssHighlightRules = ace.require("ace/mode/css_highlight_rules").CssHighlightRules;
+    const JavaScriptHighlightRules = ace.require("ace/mode/javascript_highlight_rules").JavaScriptHighlightRules;
 
     // Create custom highlight rules that extend PHP rules
     const PhpSpaHighlightRules = function(this: any) {
+      // Call parent constructor
       PhpHighlightRules.call(this);
 
-      // Define patterns for heredoc/nowdoc detection with embedded language highlighting
-      const heredocRules = [
-        // HTML heredoc patterns
-        {
-          token: "string.heredoc.delimiter.html",
-          regex: /<<<\s*(HTML)\s*$/,
-          next: "htmlHeredocBody",
-          push: true
-        },
-        {
-          token: "string.heredoc.delimiter.html", 
-          regex: /<<<\s*'(HTML)'\s*$/,
-          next: "htmlNowdocBody",
-          push: true
-        },
-        
-        // CSS heredoc patterns
-        {
-          token: "string.heredoc.delimiter.css",
-          regex: /<<<\s*(CSS)\s*$/,
-          next: "cssHeredocBody",
-          push: true
-        },
-        {
-          token: "string.heredoc.delimiter.css",
-          regex: /<<<\s*'(CSS)'\s*$/,
-          next: "cssNowdocBody", 
-          push: true
-        },
+      // Get instances of the embedded language highlight rules
+      const htmlRules = new HtmlHighlightRules().getRules();
+      const cssRules = new CssHighlightRules().getRules();
+      const jsRules = new JavaScriptHighlightRules({ jsx: false }).getRules();
 
-        // JavaScript heredoc patterns
-        {
-          token: "string.heredoc.delimiter.javascript",
-          regex: /<<<\s*(JS|JAVASCRIPT)\s*$/,
-          next: "jsHeredocBody",
-          push: true
-        },
-        {
-          token: "string.heredoc.delimiter.javascript",
-          regex: /<<<\s*'(JS|JAVASCRIPT)'\s*$/,
-          next: "jsNowdocBody",
-          push: true
-        }
-      ];
+      // Define heredoc start patterns for HTML
+      const htmlHeredocStart = {
+        token: "string.heredoc.delimiter.php",
+        regex: "<<<\\s*(HTML)\\s*$",
+        next: "htmlHeredoc-start",
+        push: true
+      };
 
-      // Add heredoc patterns to the start of PHP rules
-      for (let i = heredocRules.length - 1; i >= 0; i--) {
-        this.$rules.start.unshift(heredocRules[i]);
+      const htmlNowdocStart = {
+        token: "string.heredoc.delimiter.php",
+        regex: "<<<\\s*'(HTML)'\\s*$",
+        next: "htmlNowdoc-start",
+        push: true
+      };
+
+      // Define heredoc start patterns for CSS
+      const cssHeredocStart = {
+        token: "string.heredoc.delimiter.php",
+        regex: "<<<\\s*(CSS)\\s*$",
+        next: "cssHeredoc-start",
+        push: true
+      };
+
+      const cssNowdocStart = {
+        token: "string.heredoc.delimiter.php",
+        regex: "<<<\\s*'(CSS)'\\s*$",
+        next: "cssNowdoc-start",
+        push: true
+      };
+
+      // Define heredoc start patterns for JavaScript
+      const jsHeredocStart = {
+        token: "string.heredoc.delimiter.php",
+        regex: "<<<\\s*(JS|JAVASCRIPT)\\s*$",
+        next: "jsHeredoc-start",
+        push: true
+      };
+
+      const jsNowdocStart = {
+        token: "string.heredoc.delimiter.php",
+        regex: "<<<\\s*'(JS|JAVASCRIPT)'\\s*$",
+        next: "jsNowdoc-start",
+        push: true
+      };
+
+      // Add heredoc start patterns to PHP start rules
+      // These need to be at the beginning to have higher priority
+      if (this.$rules.start) {
+        this.$rules.start.unshift(
+          htmlHeredocStart,
+          htmlNowdocStart,
+          cssHeredocStart,
+          cssNowdocStart,
+          jsHeredocStart,
+          jsNowdocStart
+        );
       }
 
-      // Define HTML heredoc body rules (with variable interpolation)
-      this.$rules.htmlHeredocBody = [
+      // Embed HTML highlighting rules for heredoc (with PHP variable interpolation)
+      this.embedRules(htmlRules, "htmlHeredoc-", [
         {
-          token: "invalid",
-          regex: /^\s*(HTML)\s*;?\s*$/,
+          token: "string.heredoc.delimiter.php",
+          regex: "^\\s*(HTML)\\s*;?\\s*$",
           next: "pop"
         },
         {
-          token: "invalid",
-          regex: /\{\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\}/
-        },
-        {
-          token: "invalid",
-          regex: /<\/?[a-zA-Z][a-zA-Z0-9]*\b/,
-          next: "htmlTag"
-        },
-        {
-          token: "invalid",
-          regex: /[^<\{]+/
-        },
-        {
-          defaultToken: "invalid"
+          token: "variable.other.php",
+          regex: "\\{\\$[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*\\}"
         }
-      ];
+      ]);
 
-      // HTML tag state for basic HTML highlighting
-      this.$rules.htmlTag = [
+      // Embed HTML highlighting rules for nowdoc (no PHP variable interpolation)
+      this.embedRules(htmlRules, "htmlNowdoc-", [
         {
-          token: "invalid",
-          regex: />/,
-          next: "htmlHeredocBody"
-        },
-        {
-          token: "invalid",
-          regex: /[a-zA-Z-]+/
-        },
-        {
-          token: "invalid",
-          regex: /=/
-        },
-        {
-          token: "invalid",
-          regex: /"[^"]*"/
-        },
-        {
-          token: "invalid", 
-          regex: /'[^']*'/
-        },
-        {
-          defaultToken: "invalid"
+          token: "string.heredoc.delimiter.php",
+          regex: "^\\s*(HTML)\\s*;?\\s*$",
+          next: "pop"
         }
-      ];
+      ]);
 
-      // Define HTML nowdoc body rules (no variable interpolation)
-      this.$rules.htmlNowdocBody = [
+      // Embed CSS highlighting rules for heredoc (with PHP variable interpolation)
+      this.embedRules(cssRules, "cssHeredoc-", [
         {
-          token: "invalid",
-          regex: /^\s*(HTML)\s*;?\s*$/,
+          token: "string.heredoc.delimiter.php",
+          regex: "^\\s*(CSS)\\s*;?\\s*$",
           next: "pop"
         },
         {
-          token: "invalid",
-          regex: /<\/?[a-zA-Z][a-zA-Z0-9]*\b/,
-          next: "htmlTagNowdoc"
-        },
-        {
-          token: "invalid",
-          regex: /[^<]+/
-        },
-        {
-          defaultToken: "invalid"
+          token: "variable.other.php",
+          regex: "\\{\\$[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*\\}"
         }
-      ];
+      ]);
 
-      // HTML tag state for nowdoc
-      this.$rules.htmlTagNowdoc = [
+      // Embed CSS highlighting rules for nowdoc (no PHP variable interpolation)
+      this.embedRules(cssRules, "cssNowdoc-", [
         {
-          token: "invalid",
-          regex: />/,
-          next: "htmlNowdocBody"
-        },
-        {
-          token: "invalid",
-          regex: /[a-zA-Z-]+/
-        },
-        {
-          token: "invalid",
-          regex: /=/
-        },
-        {
-          token: "invalid",
-          regex: /"[^"]*"/
-        },
-        {
-          token: "invalid",
-          regex: /'[^']*'/
-        },
-        {
-          defaultToken: "invalid"
+          token: "string.heredoc.delimiter.php",
+          regex: "^\\s*(CSS)\\s*;?\\s*$",
+          next: "pop"
         }
-      ];
+      ]);
 
-      // Define CSS heredoc body rules (with variable interpolation)
-      this.$rules.cssHeredocBody = [
+      // Embed JavaScript highlighting rules for heredoc (with PHP variable interpolation)
+      this.embedRules(jsRules, "jsHeredoc-", [
         {
-          token: "invalid",
-          regex: /^\s*(CSS)\s*;?\s*$/,
+          token: "string.heredoc.delimiter.php",
+          regex: "^\\s*(JS|JAVASCRIPT)\\s*;?\\s*$",
           next: "pop"
         },
         {
-          token: "invalid",
-          regex: /\{\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\}/
-        },
-        {
-          token: "invalid",
-          regex: /[a-zA-Z-]+(?=\s*:)/
-        },
-        {
-          token: "invalid",
-          regex: /:/
-        },
-        {
-          token: "invalid",
-          regex: /[^;\{\}]+/
-        },
-        {
-          token: "invalid",
-          regex: /;/
-        },
-        {
-          defaultToken: "invalid"
+          token: "variable.other.php",
+          regex: "\\{\\$[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*\\}"
         }
-      ];
+      ]);
 
-      // Define CSS nowdoc body rules (no variable interpolation)
-      this.$rules.cssNowdocBody = [
+      // Embed JavaScript highlighting rules for nowdoc (no PHP variable interpolation)
+      this.embedRules(jsRules, "jsNowdoc-", [
         {
-          token: "invalid",
-          regex: /^\s*(CSS)\s*;?\s*$/,
+          token: "string.heredoc.delimiter.php",
+          regex: "^\\s*(JS|JAVASCRIPT)\\s*;?\\s*$",
           next: "pop"
-        },
-        {
-          token: "invalid",
-          regex: /[a-zA-Z-]+(?=\s*:)/
-        },
-        {
-          token: "invalid",
-          regex: /:/
-        },
-        {
-          token: "invalid",
-          regex: /[^;\{\}]+/
-        },
-        {
-          token: "invalid",
-          regex: /;/
-        },
-        {
-          defaultToken: "invalid"
         }
-      ];
+      ]);
 
-      // Define JavaScript heredoc body rules (with variable interpolation)  
-      this.$rules.jsHeredocBody = [
-        {
-          token: "invalid",
-          regex: /^\s*(JS|JAVASCRIPT)\s*;?\s*$/,
-          next: "pop"
-        },
-        {
-          token: "invalid",
-          regex: /\{\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\}/
-        },
-        {
-          token: "invalid",
-          regex: /\b(?:function|var|let|const|class)\b/
-        },
-        {
-          token: "keyword.control.js",
-          regex: /\b(?:if|else|for|while|return|break|continue)\b/
-        },
-        {
-          token: "string.quoted.js",
-          regex: /"(?:[^"\\]|\\.)*"/
-        },
-        {
-          token: "string.quoted.js",
-          regex: /'(?:[^'\\]|\\.)*'/
-        },
-        {
-          token: "constant.numeric.js",
-          regex: /\b\d+\.?\d*\b/
-        },
-        {
-          defaultToken: "invalid"
-        }
-      ];
-
-      // Define JavaScript nowdoc body rules (no variable interpolation)
-      this.$rules.jsNowdocBody = [
-        {
-          token: "string.heredoc.delimiter.javascript",
-          regex: /^\s*(JS|JAVASCRIPT)\s*;?\s*$/,
-          next: "pop"
-        },
-        {
-          token: "storage.type.js",
-          regex: /\b(?:function|var|let|const|class)\b/
-        },
-        {
-          token: "keyword.control.js",
-          regex: /\b(?:if|else|for|while|return|break|continue)\b/
-        },
-        {
-          token: "string.quoted.js",
-          regex: /"(?:[^"\\]|\\.)*"/
-        },
-        {
-          token: "string.quoted.js",
-          regex: /'(?:[^'\\]|\\.)*'/
-        },
-        {
-          token: "constant.numeric.js",
-          regex: /\b\d+\.?\d*\b/
-        },
-        {
-          defaultToken: "source.js"
-        }
-      ];
-
-      // Force ALL tokens across all states to 'invalid' so everything is visibly red.
-      try {
-        Object.keys(this.$rules).forEach((state: string) => {
-          this.$rules[state] = this.$rules[state].map((rule: any) => {
-            const copy: any = { ...rule };
-            if (typeof copy.token === 'string') {
-              copy.token = 'invalid';
-            } else if (Array.isArray(copy.token)) {
-              copy.token = copy.token.map(() => 'invalid');
-            }
-            if ('defaultToken' in copy) {
-              copy.defaultToken = 'invalid';
-            }
-            return copy;
-          });
-          const hasDefault = this.$rules[state].some((r: any) => 'defaultToken' in r);
-          if (!hasDefault) {
-            this.$rules[state].push({ defaultToken: 'invalid' } as any);
-          }
-        });
-      } catch (e) {
-        // ignore transform errors; fallback to normal rules
-      }
-
+      // Normalize all rules
       this.normalizeRules();
     };
 
