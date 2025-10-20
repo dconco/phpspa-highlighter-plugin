@@ -8,7 +8,7 @@ const distFolder = path.join(__dirname, "../dist");
 let readmeDotMd = path.join(__dirname, "../README.md");
 
 if (!fs.existsSync(readmeDotMd)) {
-    readmeDotMd = path.join(__dirname, "../README.md");
+    readmeDotMd = path.join(__dirname, "../readme.md");
 }
 
 // create zip file of dist folder
