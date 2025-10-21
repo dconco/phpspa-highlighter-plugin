@@ -74,20 +74,6 @@ That's it! The plugin automatically detects and highlights your heredoc blocks.
 | `<<<JS` | `<<<'JS'` | JavaScript |
 | `<<<JAVASCRIPT` | `<<<'JAVASCRIPT'` | JavaScript |
 
-## Documentation
-
-- 📚 **[Quick Start Guide](QUICK_START.md)** - Get started in 5 minutes
-- 🧪 **[Testing Guide](TESTING.md)** - How to test the plugin
-- 🔧 **[Technical Details](TECHNICAL.md)** - How it works (for developers)
-- 📝 **[Example File](example.php)** - Comprehensive examples
-- 📋 **[Changelog](CHANGES.md)** - What was changed and why
-- 🔄 **[Before/After](BEFORE_AFTER.md)** - Code comparison
-
-## Requirements
-
-- **Acode**: Version 1.8.0 or higher
-- **Android**: Any version that runs Acode
-- **PHP Files**: Must have `.php` extension
 
 ## License
 
