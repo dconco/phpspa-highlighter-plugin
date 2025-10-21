@@ -2,7 +2,7 @@
     "id": "acode.plugin.phpspa",
     "name": "PhpSPA Highlighter",
     "main": "dist/main.js",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "readme": "./readme.md",
     "theme": "./src/theme/style.css",
     "themeType": "editor",
