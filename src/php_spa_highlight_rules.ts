@@ -31,7 +31,7 @@ export class PhpSpaHighlightRules {
                     this.embedRules(HtmlHighlightRules, "html-heredoc-", [
                         {
                             token: "markup.list",
-                            regex: /^\s*HTML\s*;?\s*$/,
+                            regex: /^\s*HTML\s*[;,]?\s*$/,
                             next: "php-start"
                         }
                     ]);
@@ -53,7 +53,7 @@ export class PhpSpaHighlightRules {
                     this.embedRules(CssHighlightRules, "css-heredoc-", [
                         {
                             token: "markup.list",
-                            regex: /^\s*CSS\s*;?\s*$/,
+                            regex: /^\s*CSS\s*[;,]?\s*$/,
                             next: "php-start"
                         }
                     ]);
@@ -74,7 +74,7 @@ export class PhpSpaHighlightRules {
                     this.embedRules(JavaScriptHighlightRules, "js-heredoc-", [
                         {
                             token: "markup.list",
-                            regex: /^\s*(JS|JAVASCRIPT)\s*;?\s*$/,
+                            regex: /^\s*(JS|JAVASCRIPT)\s*[;,]?\s*$/,
                             next: "php-start"
                         }
                     ]);
@@ -86,6 +86,25 @@ export class PhpSpaHighlightRules {
                                 {
                                     token: ["text", "variable.language", "text"],
                                     regex: /(\{)(\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?:->[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*|\[[^\]]+\])*)(\})/
+                                }
+                            );
+                        }
+                    });
+
+                    // Add custom highlighting for @ component tags
+                    Object.keys(this.$rules).forEach((state: string) => {
+                        if (state.startsWith("html-heredoc-")) {
+                            this.$rules[state].unshift(
+                                // Closing tag: </@Button> or </@button.icon>
+                                {
+                                    token: ["text", "entity.name.tag.component", "text"],
+                                    regex: /(<\/)(@[a-zA-Z_][\w.-]*)(>)/
+                                },
+                                // Opening tag: <@Button> or <@button.icon>
+                                {
+                                    token: ["text", "entity.name.tag.component", "text"],
+                                    regex: /(<)(@[a-zA-Z_][\w.-]*)([\s>\/])/,
+                                    next: state
                                 }
                             );
                         }

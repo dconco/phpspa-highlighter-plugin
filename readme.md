@@ -69,10 +69,10 @@ That's it! The plugin automatically detects and highlights your heredoc blocks.
 
 | Heredoc | Nowdoc | Language |
 |---------|--------|----------|
-| `<<<HTML` | `<<<'HTML'` | HTML |
-| `<<<CSS` | `<<<'CSS'` | CSS |
-| `<<<JS` | `<<<'JS'` | JavaScript |
-| `<<<JAVASCRIPT` | `<<<'JAVASCRIPT'` | JavaScript |
+| <<<HTML | <<<'HTML' | HTML |
+| <<<CSS | <<<'CSS' | CSS |
+| <<<JS | <<<'JS' | JavaScript |
+| <<<JAVASCRIPT | <<<'JAVASCRIPT' | JavaScript |
 
 
 ## License

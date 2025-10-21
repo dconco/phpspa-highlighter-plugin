@@ -11,10 +11,26 @@ class PhpSpaHighlighter {
         // Extend PHP mode to support embedded HTML/CSS/JS in heredocs
         this.highlightRules.extendPhpMode();
         
+        // Add CSS for @ component tags
+        this.addStyles();
+        
         // Apply globally to all PHP files
         this.applyGlobally();
         
         console.log("PhpSPA Highlighter: Initialized globally");
+    }
+
+    private addStyles(): void {
+        const style = document.createElement("style");
+        style.id = "phpspa-component-style";
+        style.innerHTML = `
+            /* @ component tags - GREEN */
+            .ace_editor .ace_entity.ace_name.ace_tag.ace_component {
+                color: #22c55e !important;
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     private applyGlobally(): void {
@@ -82,6 +98,8 @@ class PhpSpaHighlighter {
     }
 
     public destroy(): void {
+        const style = document.getElementById("phpspa-component-style");
+        if (style) style.remove();
         console.log("PhpSPA Highlighter: Plugin unloaded");
     }
 }
