@@ -1,6 +1,6 @@
 {
     "name": "phpspa-highlighter",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Adds syntax highlighting support for embedded HTML, CSS, and JavaScript code within PHP heredoc (<<<HTML) and nowdoc (<<<'HTML') blocks. Automatically highlights code based on the heredoc identifier (HTML, CSS, JS, JAVASCRIPT).",
     "main": "dist/main.js",
     "repository": "https://github.com/dconco/phpspa-highlighter-plugin.git",

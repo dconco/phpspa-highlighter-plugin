@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.0] - 2025-10-21
+## [1.1.1] - 2025-10-21
 
 ### Fixed
 - Fixed plugin not working at all

@@ -11,7 +11,7 @@ export class PhpSpaHighlightRules {
     public extendPhpMode(): void {
         const ace = this.ace;
         if (!ace || !ace.define) {
-            alert("Ace editor not available");
+            console.error("Ace editor not available");
             return;
         }
 
@@ -179,7 +179,7 @@ export class PhpSpaHighlightRules {
             }
         );
 
-        alert("PhpSPA custom mode registered");
+        console.log("PhpSPA custom mode registered");
     }
 
     public activateForPhpFiles(): void {
