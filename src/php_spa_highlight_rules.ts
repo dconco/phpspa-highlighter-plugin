@@ -36,6 +36,19 @@ export class PhpSpaHighlightRules {
                         }
                     ]);
 
+                    // Add PHP variable interpolation to ALL HTML heredoc states
+                    Object.keys(this.$rules).forEach((state: string) => {
+                        if (state.startsWith("html-heredoc-")) {
+                            this.$rules[state].unshift(
+                                // {$variable} or {$object->property} or {$array['key']}
+                                {
+                                    token: ["text", "variable.language", "text"],
+                                    regex: /(\{)(\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?:->[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*|\[[^\]]+\])*)(\})/
+                                }
+                            );
+                        }
+                    });
+
                     // Embed CSS highlighting for <<<CSS heredocs
                     this.embedRules(CssHighlightRules, "css-heredoc-", [
                         {
@@ -45,6 +58,18 @@ export class PhpSpaHighlightRules {
                         }
                     ]);
 
+                    // Add PHP variable interpolation to ALL CSS heredoc states
+                    Object.keys(this.$rules).forEach((state: string) => {
+                        if (state.startsWith("css-heredoc-")) {
+                            this.$rules[state].unshift(
+                                {
+                                    token: ["text", "variable.language", "text"],
+                                    regex: /(\{)(\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?:->[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*|\[[^\]]+\])*)(\})/
+                                }
+                            );
+                        }
+                    });
+
                     // Embed JavaScript highlighting for <<<JS and <<<JAVASCRIPT heredocs
                     this.embedRules(JavaScriptHighlightRules, "js-heredoc-", [
                         {
@@ -53,6 +78,18 @@ export class PhpSpaHighlightRules {
                             next: "php-start"
                         }
                     ]);
+
+                    // Add PHP variable interpolation to ALL JS heredoc states
+                    Object.keys(this.$rules).forEach((state: string) => {
+                        if (state.startsWith("js-heredoc-")) {
+                            this.$rules[state].unshift(
+                                {
+                                    token: ["text", "variable.language", "text"],
+                                    regex: /(\{)(\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?:->[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*|\[[^\]]+\])*)(\})/
+                                }
+                            );
+                        }
+                    });
 
                     // Modify heredoc detection to transition to embedded modes
                     const phpRules = this.$rules["php-start"];

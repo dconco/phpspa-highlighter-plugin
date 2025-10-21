@@ -202,7 +202,7 @@ class Card {
                     {$content}
                 </div>
             </div>
-            HTML; // Indented ending delimiter
+        HTML;
     }
 }
 

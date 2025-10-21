@@ -11,49 +11,78 @@ class PhpSpaHighlighter {
         // Extend PHP mode to support embedded HTML/CSS/JS in heredocs
         this.highlightRules.extendPhpMode();
         
-        // Apply custom mode to PHP files
-        this.applyToEditor();
+        // Apply globally to all PHP files
+        this.applyGlobally();
         
-        alert("PhpSPA Highlighter: Initialized");
+        console.log("PhpSPA Highlighter: Initialized globally");
     }
 
-    private applyToEditor(): void {
+    private applyGlobally(): void {
         // @ts-ignore
         const ace = window.ace;
         if (!ace) return;
 
-        // Get active editor and apply custom mode
-        // @ts-ignore
-        if (window.editorManager && window.editorManager.activeFile) {
-            // @ts-ignore
-            const activeFile = window.editorManager.activeFile;
-            if (activeFile.session && activeFile.session.getMode().$id === "ace/mode/php") {
-                activeFile.session.setMode("ace/mode/php_spa");
-                alert("Applied PhpSPA mode to active PHP file");
-            }
-        }
-
-        // Hook into new file opens
+        // Intercept when mode is set to PHP and replace with PhpSPA
         // @ts-ignore
         if (window.editorManager) {
             // @ts-ignore
-            const originalSwitch = window.editorManager.switchFile;
-            // @ts-ignore
-            window.editorManager.switchFile = function(file: any) {
-                const result = originalSwitch.call(this, file);
-                setTimeout(() => {
-                    if (file && file.session && file.session.getMode().$id === "ace/mode/php") {
-                        file.session.setMode("ace/mode/php_spa");
-                        alert("Applied PhpSPA mode to: " + file.filename);
+            const editorManager = window.editorManager;
+            
+            // Hook into file switching
+            const originalSwitchFile = editorManager.switchFile;
+            if (originalSwitchFile) {
+                editorManager.switchFile = function(file: any) {
+                    const result = originalSwitchFile.apply(this, arguments);
+                    setTimeout(() => {
+                        if (file && file.session) {
+                            const mode = file.session.getMode();
+                            if (mode && mode.$id === "ace/mode/php") {
+                                file.session.setMode("ace/mode/php_spa");
+                                console.log("Applied PhpSPA to:", file.filename);
+                            }
+                        }
+                    }, 50);
+                    return result;
+                };
+            }
+
+            // Hook into adding new files
+            const originalAddFile = editorManager.addFile;
+            if (originalAddFile) {
+                editorManager.addFile = function(file: any) {
+                    const result = originalAddFile.apply(this, arguments);
+                    setTimeout(() => {
+                        if (file && file.session) {
+                            const mode = file.session.getMode();
+                            if (mode && mode.$id === "ace/mode/php") {
+                                file.session.setMode("ace/mode/php_spa");
+                                console.log("Applied PhpSPA to new file:", file.filename);
+                            }
+                        }
+                    }, 50);
+                    return result;
+                };
+            }
+
+            // Apply to all currently open PHP files
+            if (editorManager.files) {
+                editorManager.files.forEach((file: any) => {
+                    if (file && file.session) {
+                        const mode = file.session.getMode();
+                        if (mode && mode.$id === "ace/mode/php") {
+                            file.session.setMode("ace/mode/php_spa");
+                            console.log("Applied PhpSPA to existing file:", file.filename);
+                        }
                     }
-                }, 100);
-                return result;
-            };
+                });
+            }
         }
+
+        console.log("PhpSPA mode applied globally");
     }
 
     public destroy(): void {
-        alert("PhpSPA Highlighter: Plugin unloaded");
+        console.log("PhpSPA Highlighter: Plugin unloaded");
     }
 }
 

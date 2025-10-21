@@ -1,0 +1,7 @@
+/* PhpSPA Highlighter styles */
+
+/* Component tags (capital letter or @) - GREEN */
+.ace_editor .ace_entity.ace_name.ace_tag.ace_component {
+    color: #00ff00 !important;
+    font-weight: bold;
+}
