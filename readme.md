@@ -42,7 +42,7 @@ class Button {
          </button>
       HTML;
    }
-   
+
    public function styles($defaultColor) {
       return <<<CSS
          .btn {
@@ -52,7 +52,7 @@ class Button {
          }
       CSS;
    }
-   
+
    public function script() {
       return <<<JS
          function handleClick() {
@@ -64,16 +64,20 @@ class Button {
 ```
 
 That's it! The plugin automatically detects and highlights your heredoc blocks.
+You might not be able to see the highlighting here but you'll see it once installed on your .php file
 
 ## Supported Identifiers
 
-| Heredoc | Nowdoc | Language |
-|---------|--------|----------|
-| <<<HTML | <<<'HTML' | HTML |
-| <<<CSS | <<<'CSS' | CSS |
-| <<<JS | <<<'JS' | JavaScript |
+| Heredoc       | Nowdoc          | Language   |
+| ------------- | --------------- | ---------- |
+| <<<HTML       | <<<'HTML'       | HTML       |
+| <<<CSS        | <<<'CSS'        | CSS        |
+| <<<JS         | <<<'JS'         | JavaScript |
 | <<<JAVASCRIPT | <<<'JAVASCRIPT' | JavaScript |
 
+## Learn More
+
+[PhpSPA Framework Documentation](https://phpspa.tech)
 
 ## License
 

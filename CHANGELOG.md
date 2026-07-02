@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.2] - 2026-07-02
+
+### Added
+- Added support for Acode's newer CodeMirror editor while keeping Ace support for older Acode versions
+- Added `phpspa` language registration for CodeMirror-based Acode versions
+- Added CodeMirror heredoc highlighting for `<<<HTML`, `<<<CSS`, `<<<JS`, and `<<<JAVASCRIPT`
+- Added nowdoc highlighting for `<<<'HTML'`, `<<<'CSS'`, `<<<'JS'`, and `<<<'JAVASCRIPT'`
+- Added theme-aware CodeMirror colors using Acode's active editor theme
+- Added improved JavaScript highlighting inside JS heredocs, including keywords, function names, class names, properties, strings, comments, regex literals, numbers, operators, and variables
+- Added improved CSS highlighting inside CSS heredocs, including selectors, properties, custom properties, variables, functions, strings, comments, and numbers
+
+### Fixed
+- Fixed PhpSPA mode not being applied on newer CodeMirror-based Acode versions
+- Fixed quoted nowdoc heredocs not being detected in CodeMirror
+- Fixed indented heredoc closing detection for endings such as `HTML;`, `HTML)`, and `HTML, $params)`
+- Fixed CodeMirror decoration ordering so heredoc highlighting reliably renders
+- Fixed hardcoded CodeMirror heredoc colors so highlighting follows the selected Acode theme
+
 ## [1.1.1] - 2025-10-21
 
 ### Fixed

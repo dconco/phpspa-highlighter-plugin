@@ -1,20 +1,20 @@
 {
-    "id": "acode.plugin.phpspa",
-    "name": "PhpSPA Highlighter",
-    "main": "dist/main.js",
-    "version": "1.1.1",
-    "readme": "./readme.md",
-    "theme": "./src/theme/style.css",
-    "themeType": "editor",
-    "icon": "icon.png",
-    "files": [],
-    "license": "MIT",
-    "minVersionCode": 290,
-    "price": 0,
-    "author": {
-        "name": "dconco",
-        "github": "dconco",
-        "email": "concodave@gmail.com",
-        "url": "https://dconco.github.io"
-    }
+	"id": "acode.plugin.phpspa",
+	"name": "PhpSPA Highlighter",
+	"main": "dist/main.js",
+	"version": "1.1.2",
+	"readme": "./readme.md",
+	"theme": "./src/theme/style.css",
+	"themeType": "editor",
+	"icon": "icon.png",
+	"files": [],
+	"license": "MIT",
+	"minVersionCode": 290,
+	"price": 0,
+	"author": {
+		"name": "dconco",
+		"github": "dconco",
+		"email": "concodave@gmail.com",
+		"url": "https://dconco.github.io"
+	}
 }

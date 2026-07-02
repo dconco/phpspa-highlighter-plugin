@@ -16,15 +16,15 @@ class Button {
      * Render button HTML with variable interpolation
      */
     public function render($name, $id, $class = 'btn-primary') {
-        return <<<HTML
-            <button 
-                class="btn {$class}" 
+        return (<<<HTML
+            <button
+                class="btn {$class}"
                 id="{$id}" 
                 onclick="handleClick('{$id}')">
                 <span class="btn-icon">👋</span>
                 <span class="btn-text">Hello {$name}!</span>
             </button>
-        HTML;
+        HTML);
     }
     
     /**
@@ -193,7 +193,7 @@ class Modal {
  */
 class Card {
     public function render($title, $content) {
-        return <<<HTML
+        return <<<'HTML'
             <div class="card">
                 <div class="card-header">
                     <h3>{$title}</h3>
